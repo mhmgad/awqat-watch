@@ -1,0 +1,68 @@
+{
+  "app": {
+    "bundleName": "com.mhmgad.awqat",
+    "vendor": "mhmgad",
+    "version": {
+      "code": 1000000,
+      "name": "1.0.0"
+    }
+  },
+  "deviceConfig": {},
+  "module": {
+    "deviceType": [
+      "liteWearable"
+    ],
+    "distro": {
+      "deliveryWithInstall": true,
+      "moduleName": "entry",
+      "moduleType": "entry"
+    },
+    "distroFilter": {
+      "screenShape": {
+        "policy": "include",
+        "value": [
+          "rect"
+        ]
+      },
+      "screenWindow": {
+        "policy": "include",
+        "value": [
+          "408*480"
+        ]
+      }
+    },
+    "abilities": [
+      {
+        "name": ".MainAbility",
+        "srcLanguage": "js",
+        "srcPath": "MainAbility",
+        "icon": "$media:icon",
+        "description": "$string:MainAbility_desc",
+        "label": "$string:MainAbility_label",
+        "type": "page",
+        "visible": true
+      }
+    ],
+    "metaData": {
+      "customizeData": [
+        {
+          "name": "supportLists",
+          "value": "com.mhmgad.awqat.android:REPLACE_ANDROID_SHA256",
+          "extra": ""
+        }
+      ]
+    },
+    "js": [
+      {
+        "pages": [
+          "pages/index/index"
+        ],
+        "name": ".MainAbility",
+        "window": {
+          "designWidth": 408,
+          "autoDesignWidth": false
+        }
+      }
+    ]
+  }
+}

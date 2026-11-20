@@ -1,0 +1,14 @@
+<div class="page">
+  <text class="mosque">{{mosque}}</text>
+  <text class="kicker">Next</text>
+  <text class="next-name">{{nextName}}</text>
+  <text class="next-clock">{{nextClock}}</text>
+  <text class="countdown">{{countdown}}</text>
+  <list class="prayers">
+    <list-item for="{{rows}}" type="prayer" class="row">
+      <text class="{{$item.hi}}">{{$item.name}}</text>
+      <text class="clock">{{$item.clock}}</text>
+    </list-item>
+  </list>
+  <text class="status">{{status}}</text>
+</div>

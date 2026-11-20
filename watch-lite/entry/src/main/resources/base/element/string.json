@@ -1,0 +1,16 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "Prayer times from MAWAQIT"
+    },
+    {
+      "name": "MainAbility_desc",
+      "value": "Mosque prayer times"
+    },
+    {
+      "name": "MainAbility_label",
+      "value": "Awqat"
+    }
+  ]
+}

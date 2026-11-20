@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Awqat</string>
+    <string name="subtitle">MAWAQIT times for HUAWEI WATCH FIT 3</string>
+    <string name="query_hint">Mosque slug or mawaqit.net URL</string>
+    <string name="load">Load mosque</string>
+    <string name="sync_watch">Send to FIT 3</string>
+    <string name="status_idle">Load a mosque, then send the times to the watch.</string>
+    <string name="status_loading">Loading MAWAQIT…</string>
+    <string name="status_loaded">Times loaded. Open Awqat on the watch, then send.</string>
+    <string name="status_syncing">Sending to the FIT 3…</string>
+    <string name="status_load_first">Load a mosque first.</string>
+    <string name="status_permission">Wear Engine permission denied.</string>
+    <string name="status_no_wear_engine">Phone times work. Wear Engine is not available on this device.</string>
+    <string name="times_block">%1$s\nFajr     %2$s\nDhuhr    %3$s\nJumua    %4$s\nAsr      %5$s\nMaghrib  %6$s\nIsha     %7$s</string>
+</resources>

@@ -39,7 +39,12 @@ oh-package-lock.json5
 **/oh-package-lock.json5
 
 .gradle/
+**/.gradle/
 .externalNativeBuild/
+android/local.properties
+android/app/agconnect-services.json
+*.jks
+*.keystore
 
 *.swp
 *.swo

@@ -1,0 +1,13 @@
+.preview
+oh-package-lock.json5
+__pycache__/
+.idea/
+.hvigor/
+local.properties
+/oh_modules
+/build
+/.preview
+*.csr
+*.p12
+*.cer
+*.p7b
