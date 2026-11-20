@@ -50,13 +50,13 @@ if [[ "${arch}" == "aarch64" || "${arch}" == "arm64" ]] && [[ "${os}" == "Linux"
 fi
 
 echo
-echo "Awqat API"
-if curl -fsS --max-time 15 \
-  'https://widget.fawzone.net/widget/findWidgets?label=Lille&type=salat-widget' \
-  | grep -q '"result"'; then
-  ok "widget.fawzone.net is reachable"
+echo "Mawaqit"
+if curl -fsS --max-time 20 \
+  'https://mawaqit.net/en/grande-mosquee-de-paris' \
+  | grep -q 'confData'; then
+  ok "mawaqit.net mosque pages are reachable"
 else
-  warn "Could not reach widget.fawzone.net (needed for mosque times)."
+  warn "Could not reach mawaqit.net (needed for mosque times)."
 fi
 
 echo
@@ -65,7 +65,8 @@ root="$(cd "$(dirname "$0")/.." && pwd)"
 for required in \
   "${root}/AppScope/app.json5" \
   "${root}/entry/src/main/module.json5" \
-  "${root}/entry/src/main/ets/pages/Index.ets"
+  "${root}/entry/src/main/ets/pages/Index.ets" \
+  "${root}/entry/src/main/ets/service/MawaqitApi.ets"
 do
   if [[ -f "${required}" ]]; then
     ok "${required#${root}/}"

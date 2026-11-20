@@ -1,7 +1,6 @@
 import { DayTimetable, MosqueChoice, PrayerRow } from '../model/Models';
-import { AwqatApi } from './AwqatApi';
-import { asArray, asObject, boolVal, numVal, strVal } from './JsonUtil';
-import { PrayTimes } from './PrayTimes';
+import { asArray, asObject, boolVal, strVal } from './JsonUtil';
+import { MawaqitApi } from './MawaqitApi';
 
 const DISPLAY: Record<string, string> = {
   'fajr': 'Fajr',
@@ -12,87 +11,75 @@ const DISPLAY: Record<string, string> = {
   'isha': 'Isha'
 };
 
-const CALENDAR_ORDER: string[] = ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha'];
-
 export class TimetableService {
-  private api: AwqatApi = new AwqatApi();
+  private api: MawaqitApi = new MawaqitApi();
 
   async load(mosque: MosqueChoice): Promise<DayTimetable> {
-    const packed = await this.api.fetchConfig(mosque);
-    const cfg = asObject(packed['cfg']);
-    const calendar = await this.api.fetchCalendar(mosque.code);
+    const page = await this.api.fetchMosque(mosque.code);
+    const conf = page.conf;
     const now = new Date();
-    const clocks = this.clocksForDay(cfg, calendar, now);
-    return this.toTimetable(mosque, cfg, clocks, now);
+    const clocks = this.clocksFromConf(conf, now);
+    mosque.label = page.choice.label || mosque.label;
+    return this.toTimetable(mosque, conf, clocks, now);
   }
 
-  private clocksForDay(
-    cfg: Record<string, Object>,
-    calendar: Record<string, string[]>,
-    now: Date
-  ): Record<string, string> {
-    const geo = asObject(cfg['geoPlace']);
-    const timeSetting = asObject(cfg['timeSetting']);
-    const settings = asObject(timeSetting['timeItemSettings']);
-    const method = strVal(timeSetting, 'method', 'UOIF');
-    const lat = numVal(geo, 'lat');
-    const lng = numVal(geo, 'long', numVal(geo, 'lng'));
-    const tzHours = -now.getTimezoneOffset() / 60;
-    const calculator = new PrayTimes();
-    calculator.setMethod(method);
-    const fajrSetting = asObject(settings['fajr']);
-    const ishaSetting = asObject(settings['isha']);
-    if (method === 'CUSTOM' && strVal(fajrSetting, 'angle')) {
-      calculator.setAngle('fajr', strVal(fajrSetting, 'angle'));
-    }
-    if (method === 'CUSTOM' && strVal(ishaSetting, 'angle')) {
-      calculator.setAngle('isha', strVal(ishaSetting, 'angle'));
-    }
-    const computed = calculator.getTimes(now.getFullYear(), now.getMonth() + 1, now.getDate(), lat, lng, tzHours);
+  private clocksFromConf(conf: Record<string, Object>, now: Date): Record<string, string> {
     const clocks: Record<string, string> = {
-      'fajr': computed['fajr'],
-      'dhuhr': computed['dhuhr'],
-      'asr': computed['asr'],
-      'maghrib': computed['maghrib'],
-      'isha': computed['isha']
+      'fajr': '--:--',
+      'dhuhr': '--:--',
+      'asr': '--:--',
+      'maghrib': '--:--',
+      'isha': '--:--',
+      'jumua': '--:--'
     };
-
-    if (boolVal(timeSetting, 'useCal')) {
-      const key = this.calendarKey(now);
-      const row = calendar[key];
-      if (row && row.length >= 6) {
-        for (let i = 0; i < CALENDAR_ORDER.length; i++) {
-          const name = CALENDAR_ORDER[i];
-          if (name !== 'sunrise') {
-            clocks[name] = row[i];
-          }
-        }
+    const row = this.todayRow(conf, now);
+    if (row.length >= 6) {
+      const offset = row.length === 7 ? 1 : 0;
+      clocks['fajr'] = row[offset];
+      clocks['dhuhr'] = row[offset + 2];
+      clocks['asr'] = row[offset + 3];
+      clocks['maghrib'] = row[offset + 4];
+      clocks['isha'] = row[offset + 5];
+    } else {
+      const times = stringRow(conf['times']);
+      if (times.length >= 5) {
+        clocks['fajr'] = times[0];
+        clocks['dhuhr'] = times[1];
+        clocks['asr'] = times[2];
+        clocks['maghrib'] = times[3];
+        clocks['isha'] = times[4];
       }
     }
-
-    clocks['dhuhr'] = this.applyFixed(clocks['dhuhr'], asObject(settings['dhuhr']), now);
-    clocks['jumua'] = this.applyFixed(clocks['dhuhr'], asObject(settings['jumua']), now);
-    clocks['fajr'] = this.applyFixed(clocks['fajr'], asObject(settings['fajr']), now);
-    clocks['asr'] = this.applyFixed(clocks['asr'], asObject(settings['asr']), now);
-    clocks['maghrib'] = this.applyFixed(clocks['maghrib'], asObject(settings['maghrib']), now);
-    clocks['isha'] = this.applyFixed(clocks['isha'], asObject(settings['isha']), now);
+    if (boolVal(conf, 'jumuaAsDuhr')) {
+      clocks['jumua'] = clocks['dhuhr'];
+    } else {
+      clocks['jumua'] = strVal(conf, 'jumua', clocks['dhuhr']);
+    }
     return clocks;
+  }
+
+  private todayRow(conf: Record<string, Object>, now: Date): string[] {
+    const calendar = asArray(conf['calendar']);
+    if (calendar.length < 12) {
+      return [];
+    }
+    const month = asObject(calendar[now.getMonth()]);
+    return stringRow(month[`${now.getDate()}`]);
   }
 
   private toTimetable(
     mosque: MosqueChoice,
-    cfg: Record<string, Object>,
+    conf: Record<string, Object>,
     clocks: Record<string, string>,
     now: Date
   ): DayTimetable {
-    const timeSetting = asObject(cfg['timeSetting']);
     const friday = now.getDay() === 5;
     const names = friday ?
       ['fajr', 'jumua', 'asr', 'maghrib', 'isha'] :
       ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'];
     const table = new DayTimetable();
     table.mosqueLabel = mosque.label;
-    table.method = strVal(timeSetting, 'method', 'UOIF');
+    table.method = 'Mawaqit';
 
     let nextName = names[0];
     let nextClock = clocks[names[0]];
@@ -129,38 +116,6 @@ export class TimetableService {
     return table;
   }
 
-  private applyFixed(current: string, setting: Record<string, Object>, now: Date): string {
-    const fixedTimes = asArray(setting['fixedTimes']);
-    if (fixedTimes.length === 0) {
-      return current;
-    }
-    const dst = this.isDst(now);
-    for (let i = 0; i < fixedTimes.length; i++) {
-      const item = asObject(fixedTimes[i]);
-      const raw = strVal(item, 'time');
-      if (raw.length < 4) {
-        continue;
-      }
-      const kind = strVal(item, 'type');
-      if (kind === 'dst_yes' && !dst) {
-        continue;
-      }
-      if (kind === 'dst_no' && dst) {
-        continue;
-      }
-      return `${raw.substring(0, 2)}:${raw.substring(2, 4)}`;
-    }
-    return current;
-  }
-
-  private calendarKey(now: Date): string {
-    const day = now.getDate();
-    const month = now.getMonth() + 1;
-    const dd = day < 10 ? `0${day}` : `${day}`;
-    const mm = month < 10 ? `0${month}` : `${month}`;
-    return `${dd}/${mm}`;
-  }
-
   private clockToDate(clock: string, day: Date, nextDayIfPast: boolean): Date {
     const parts = clock.split(':');
     const hours = Number(parts[0] ?? '0');
@@ -171,10 +126,13 @@ export class TimetableService {
     }
     return result;
   }
+}
 
-  private isDst(now: Date): boolean {
-    const jan = new Date(now.getFullYear(), 0, 1).getTimezoneOffset();
-    const jul = new Date(now.getFullYear(), 6, 1).getTimezoneOffset();
-    return Math.min(jan, jul) === now.getTimezoneOffset() && jan !== jul;
+function stringRow(value: Object | string | number | boolean | null | undefined): string[] {
+  const items = asArray(value);
+  const out: string[] = [];
+  for (let i = 0; i < items.length; i++) {
+    out.push(`${items[i]}`);
   }
+  return out;
 }

@@ -18,7 +18,7 @@
     },
     {
       "name": "search_placeholder",
-      "value": "Mosque or city"
+      "value": "lille or mosque slug"
     },
     {
       "name": "search",
@@ -30,7 +30,7 @@
     },
     {
       "name": "no_results",
-      "value": "No mosques found"
+      "value": "Not found. Use the slug from mawaqit.net/en/…"
     },
     {
       "name": "next_prayer",

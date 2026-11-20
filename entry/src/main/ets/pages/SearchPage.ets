@@ -1,6 +1,6 @@
 import { router } from '@kit.ArkUI';
 import { MosqueChoice } from '../model/Models';
-import { AwqatApi } from '../service/AwqatApi';
+import { MawaqitApi } from '../service/MawaqitApi';
 import { MosqueStore } from '../service/MosqueStore';
 
 @Component
@@ -9,7 +9,7 @@ struct SearchPage {
   @State loading: boolean = false;
   @State errorText: string = '';
   @State results: MosqueChoice[] = [];
-  private api: AwqatApi = new AwqatApi();
+  private api: MawaqitApi = new MawaqitApi();
 
   private async search(): Promise<void> {
     if (!this.query.trim()) {
@@ -20,7 +20,7 @@ struct SearchPage {
     try {
       this.results = await this.api.searchMosques(this.query);
       if (this.results.length === 0) {
-        this.errorText = 'No mosques found';
+        this.errorText = 'Not found. Use the slug from mawaqit.net/en/…';
       }
     } catch (_err) {
       this.errorText = 'Could not load times';
@@ -43,7 +43,7 @@ struct SearchPage {
         .fontColor($r('app.color.accent'))
         .margin({ top: 16, bottom: 8 })
 
-      TextInput({ placeholder: 'Mosque or city', text: this.query })
+      TextInput({ placeholder: 'lille or mosque slug', text: this.query })
         .width('82%')
         .height(36)
         .fontSize(13)
