@@ -1,0 +1,44 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "Prayer times for HarmonyOS watches"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "Awqat prayer times"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "Awqat"
+    },
+    {
+      "name": "choose_mosque",
+      "value": "Choose mosque"
+    },
+    {
+      "name": "search_placeholder",
+      "value": "Mosque or city"
+    },
+    {
+      "name": "search",
+      "value": "Search"
+    },
+    {
+      "name": "loading",
+      "value": "Loading…"
+    },
+    {
+      "name": "no_results",
+      "value": "No mosques found"
+    },
+    {
+      "name": "next_prayer",
+      "value": "Next"
+    },
+    {
+      "name": "network_error",
+      "value": "Could not load times"
+    }
+  ]
+}

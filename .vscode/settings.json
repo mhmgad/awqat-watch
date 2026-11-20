@@ -1,0 +1,7 @@
+{
+  "files.associations": {
+    "*.ets": "typescript",
+    "*.json5": "jsonc"
+  },
+  "editor.formatOnSave": false
+}

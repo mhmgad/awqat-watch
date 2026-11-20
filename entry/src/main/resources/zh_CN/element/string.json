@@ -1,0 +1,44 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "HarmonyOS 手表礼拜时间"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "Awqat 礼拜时间"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "Awqat"
+    },
+    {
+      "name": "choose_mosque",
+      "value": "选择清真寺"
+    },
+    {
+      "name": "search_placeholder",
+      "value": "清真寺或城市"
+    },
+    {
+      "name": "search",
+      "value": "搜索"
+    },
+    {
+      "name": "loading",
+      "value": "加载中…"
+    },
+    {
+      "name": "no_results",
+      "value": "未找到清真寺"
+    },
+    {
+      "name": "next_prayer",
+      "value": "下一个"
+    },
+    {
+      "name": "network_error",
+      "value": "无法加载时间"
+    }
+  ]
+}
